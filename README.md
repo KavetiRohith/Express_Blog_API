@@ -1,6 +1,6 @@
 # Express Blog Api
 
-This is a backend Api for a simple bog application built using mongodb,mongoose,express and other libraries
+This is a backend Api for a simple blog application built using mongodb,mongoose,express and other libraries
 
 It handles authentication and user and signup as well
 
