@@ -10,13 +10,15 @@ const SECRET = process.env.SECRET;
 router.post("/signup", (req, res) => {
   const { value, error } = signupValidator(req.body);
   const { user_name, email, password } = value;
-  if (error) return res.status(400).json(error);
+  if (error) return res.status(400).json(error.message);
   User.findOne({ $or: [{ email }, { user_name }] }).then((user) => {
     if (user) {
       if (user.email === email) {
-        return res.status(400).json("user with given email exists");
+        return res.status(400).json({ email: "user with given email exists" });
       } else {
-        return res.status(400).json("user with given user_name exists");
+        return res
+          .status(400)
+          .json({ user_name: "user with given user_name exists" });
       }
     } else {
       const newUser = new User({ user_name, email, password });
@@ -26,7 +28,12 @@ router.post("/signup", (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then((user) => res.json(user))
+            .then((user) =>
+              res.json({
+                id: user.id,
+                user_name: user.user_name,
+              }),
+            )
             .catch((err) =>
               console.log({ error: "Error creating a new user" }),
             );
@@ -38,7 +45,7 @@ router.post("/signup", (req, res) => {
 
 router.post("/login", (req, res) => {
   const { error } = loginValidator(req.body);
-  if (error) return res.status(400).send(error);
+  if (error) return res.status(400).send(error.message);
   email = req.body.email;
   password = req.body.password;
   User.findOne({ email }).then((user) => {
