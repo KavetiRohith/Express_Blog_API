@@ -1,21 +1,21 @@
-const mongoose = require('mongoose');
-const express = require('express');
-require('dotenv').config();
+const mongoose = require("mongoose");
+const express = require("express");
+require("dotenv").config();
 const passport = require("passport");
 const path = require("path");
 
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
 // const MONGO_URI = process.env.MONGO_URI
-const MONGO_URI = 'mongodb://localhost/blogdb'
+const MONGO_URI = "mongodb://localhost/blogdb";
 
 mongoose
-  .connect(MONGO_URI,{ useNewUrlParser: true,useUnifiedTopology: true })
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Mongo Connection successful"))
-  .catch(err => console.log("err"));
+  .catch((err) => console.log("err"));
 
 mongoose.set("useFindAndModify", false);
 mongoose.Promise = global.Promise;
@@ -33,4 +33,4 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT,()=>console.log(`Server listening on port ${PORT}`))
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
