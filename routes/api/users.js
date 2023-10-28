@@ -34,9 +34,10 @@ router.post("/signup", (req, res) => {
                 user_name: user.user_name,
               }),
             )
-            .catch((err) =>
-              console.log({ error: "Error creating a new user" }),
-            );
+            .catch((err) => {
+              console.error(err);
+              res.status(500).json({ error: "Error creating a new user" });
+            });
         });
       });
     }
@@ -48,31 +49,36 @@ router.post("/login", (req, res) => {
   if (error) return res.status(400).send(error.message);
   email = req.body.email;
   password = req.body.password;
-  User.findOne({ email }).then((user) => {
-    if (!user) {
-      return res.status(404).json({ email: "email not found" });
-    }
-    hash = user.password;
-    bcrypt.compare(password, hash).then((isMatch) => {
-      if (isMatch) {
-        const payload = {
-          id: user.id,
-          user_name: user.user_name,
-        };
-        jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
-          if (err) {
-            console.log(err);
-          }
-          return res.json({
-            success: true,
-            token: "Bearer " + token,
-          });
-        });
-      } else {
-        return res.status(400).json({ password: "incorrect password!!" });
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ email: "email not found" });
       }
+      hash = user.password;
+      bcrypt.compare(password, hash).then((isMatch) => {
+        if (isMatch) {
+          const payload = {
+            id: user.id,
+            user_name: user.user_name,
+          };
+          jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
+            if (err) {
+              console.log(err);
+            }
+            return res.json({
+              success: true,
+              token: "Bearer " + token,
+            });
+          });
+        } else {
+          return res.status(401).send();
+        }
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send();
     });
-  });
 });
 
 module.exports = router;

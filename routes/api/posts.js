@@ -32,17 +32,21 @@ router.get(
 router.get("/:id", (req, res) => {
   Post.findOne({ _id: req.params.id })
     .then((post) => res.status(200).json(convertPostToResponse(post)))
-    .catch((err) => res.status(400).json({ id: "Error fetching post by id" }));
+    .catch((err) => {
+      console.error(err);
+      res.status(400).json({ id: "Error fetching post by id" });
+    });
 });
 
 router.get("/author/:author", (req, res) => {
   Post.find({ author: req.params.author })
     .then((posts) => res.status(200).json(posts.map(convertPostToResponse)))
-    .catch((err) =>
+    .catch((err) => {
+      console.error(err);
       res
         .status(400)
-        .json({ author: "Error fetching posts of specific author" }),
-    );
+        .json({ author: "Error fetching posts of specific author" });
+    });
 });
 
 router.post(
@@ -60,9 +64,10 @@ router.post(
     newPost
       .save()
       .then((doc) => res.json(convertPostToResponse(doc)))
-      .catch((err) =>
-        res.status(400).json({ create: "Error creating new post" }),
-      );
+      .catch((err) => {
+        console.error(err);
+        res.status(400).json({ create: "Error creating new post" });
+      });
   },
 );
 
@@ -82,9 +87,10 @@ router.patch(
       { new: true },
     )
       .then((doc) => res.status(200).json(convertPostToResponse(doc)))
-      .catch((err) =>
-        res.status(400).json({ update: "Error updating existing post" }),
-      );
+      .catch((err) => {
+        console.error(err);
+        res.status(400).json({ update: "Error updating existing post" });
+      });
   },
 );
 
@@ -95,7 +101,10 @@ router.delete(
     const author = req.user.user_name;
     Post.findOneAndDelete({ author, _id: req.params.id })
       .then((doc) => res.status(200).json(convertPostToResponse(doc)))
-      .catch((err) => res.status(400).json({ delete: "Error deleting post" }));
+      .catch((err) => {
+        console.error(err);
+        res.status(400).json({ delete: "Error deleting post" });
+      });
   },
 );
 
