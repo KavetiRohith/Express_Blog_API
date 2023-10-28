@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const express = require("express");
 require("dotenv").config();
-const passport = require("passport");
-
+require("./middleware/passport.js");
 const app = express();
 
 app.use(express.json());
@@ -15,7 +14,6 @@ mongoose
   .then(() => console.log("Mongo Connection successful"))
   .catch((err) => console.error(err));
 
-require("./middleware/passport")(passport);
 app.use("/api/users/", require("./routes/api/users"));
 app.use("/api/posts/", require("./routes/api/posts"));
 
